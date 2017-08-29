@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+        
+        <!-- 如下代码就相当于 HelloWorld hw = new HelloWorld(); -->
+        <bean id="hw" class="com.hx.spring.entity.HelloWorld" scope="prototype"></bean>
+        
+        <bean id="user" class="com.hx.spring.entity.User">
+        	<!-- 引用用ref，设置值用value -->
+        	<property name="id" value="2"/>
+        	<property name="userName" value="八戒"/>
+        	<property name="passWord" value="123456"/>
+        	<property name="nickName" value="李四"/>
+        	<property name="email" value="bajie@qq.com"/>
+        </bean>
+        
+        <bean id="userDao" class="com.hx.spring.dao.impl.UserDaoImpl"/>
+        
+        <!-- 以下是使用自动注入，setter方法和构造函数都没有，不常用，了解即可，基本上都是使用set方法注入
+        	其中autowire="default"表示不自动注入，"byName"表示根据名称注入，也就去类中找到对象名称，
+        	byType表示在类中找到对象的类型，比如UserDao这个接口类型注入(类型注入如果有两个一样的类型对象就会抛出异常，一般都是用byName)
+        	虽然自动注入配置少，但是通过beans.xml配置文件无法很好的了解整个类的结构，所以不建议使用autowire
+         -->
+        <bean id="userService" class="com.hx.spring.service.impl.UserServiceImpl" autowire="byName"/>
+        
+        <bean id="userController" class="com.hx.spring.controller.UserController" scope="prototype">
+        	<property name="userService" ref="userService"/>
+        	<!-- 注入user属性以及id属性 -->
+        	<property name="user" ref="user"/>
+        	<property name="id" value="10"/>
+        	<!-- 同样可以注入列表，但不常用，注入names属性 -->
+        	<property name="names">
+        		<list>
+        			<value>aa</value>
+        			<value>bb</value>
+        			<value>cc</value>
+        			<!-- <ref bean="user"/> --><!-- 如果list中是对象类型还可以用ref进行引用 -->
+        		</list>
+        	</property>
+        </bean>
+</beans>
+
+ <!-- <bean id="user" class="com.hx.spring.entity.User"/>
+        
+ <bean id="userDao" class="com.hx.spring.dao.impl.UserDaoImpl"/>
+ 
+ <bean id="userService" class="com.hx.spring.service.impl.UserServiceImpl">
+ 	name的值会在userService对象中调用setXxx方法，例如:name="userDao"在实际注入会调用
+ 	setUserDao(UserDao userDao)方法来完成注入， ref="userDao"表示配置文件beans.xml创建的id
+ 	
+ 	<property name="userDao" ref="userDao"></property> 使用property就是使用的set注入
+ 	
+ </bean>
+ 
+ <bean id="userController" class="com.hx.spring.controller.UserController" scope="prototype">
+ 	<property name="userService" ref="userService"></property>
+ </bean> -->
